@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   String answer = '';
 
   void onNumpadPress(String charPressed) {
-    print(charPressed + ' asdflv');
+    print(charPressed + ' pressed!');
     setState(() {
       queryString += charPressed;
     });
@@ -75,8 +75,9 @@ class AnswerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.blue,
       child: Text(this.text),
+      decoration:
+          BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
     );
   }
 }
@@ -88,8 +89,9 @@ class QueryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.green,
       child: Text(this.text),
+      decoration:
+          BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
     );
   }
 }
@@ -99,16 +101,86 @@ class Numpad extends StatelessWidget {
 
   final ValueSetter<String> onKeyPress;
 
+  final List<String> firstRow = const ['7', '8', '9', '/'];
+  final List<String> secondRow = const ['4', '5', '6', 'X'];
+  final List<String> thirdRow = const ['1', '2', '3', '-'];
+  final List<String> fourthRow = const ['.', '0', '<x', '+'];
+  final List<String> fifthRow = const ['C', '='];
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.red,
-      child: ElevatedButton(
-        child: Text('click me!'),
+      padding: EdgeInsets.only(top: 10),
+        child: Column(
+      children: [
+        Expanded(
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: firstRow
+                  .map((displayValue) => NumpadButton(
+                        text: displayValue,
+                        onKeyPress: onKeyPress,
+                      ))
+                  .toList()),
+        ),
+        Expanded(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: secondRow
+                    .map((displayValue) => NumpadButton(
+                          text: displayValue,
+                          onKeyPress: onKeyPress,
+                        ))
+                    .toList())),
+        Expanded(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: thirdRow
+                    .map((displayValue) => NumpadButton(
+                          text: displayValue,
+                          onKeyPress: onKeyPress,
+                        ))
+                    .toList())),
+        Expanded(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: fourthRow
+                    .map((displayValue) => NumpadButton(
+                          text: displayValue,
+                          onKeyPress: onKeyPress,
+                        ))
+                    .toList())),
+        Expanded(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: fifthRow
+                    .map((displayValue) => NumpadButton(
+                          text: displayValue,
+                          onKeyPress: onKeyPress,
+                        ))
+                    .toList())),
+      ],
+    ));
+  }
+}
+
+class NumpadButton extends StatelessWidget {
+  const NumpadButton({Key? key, required this.text, required this.onKeyPress})
+      : super(key: key);
+  final String text;
+  final ValueSetter<String> onKeyPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
         onPressed: () {
-          onKeyPress('sgg');
+          onKeyPress(text);
         },
-      ),
-    );
+        style: OutlinedButton.styleFrom(shape: CircleBorder()),
+        child: Container(
+            child: Text(
+          text,
+          style: TextStyle(color: Colors.black),
+        ), padding: EdgeInsets.all(25),));
   }
 }
