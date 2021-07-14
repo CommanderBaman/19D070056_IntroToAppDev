@@ -37,8 +37,9 @@ class _HomePageState extends State<HomePage> {
         break;
       // remove one element
       case '<':
-        queryString = queryString.substring(0, queryString.length - 1);
-        print(queryString);
+        setState(() {
+          queryString = queryString.substring(0, queryString.length - 1);
+        });
         break;
       // calculate the answer
       case '=':
@@ -52,14 +53,28 @@ class _HomePageState extends State<HomePage> {
   }
 
   void calculateAnswer() {
-    final operands = queryString.split(RegExp(r'[/*+-]'));
-    final operator = queryString[queryString.indexOf('*') +
+    final operands = queryString.split(RegExp(r'[/*+-]')).where((element) => element != '').toList();
+    final operatorIndex = queryString.indexOf('*') +
         queryString.indexOf('-') +
         queryString.indexOf('+') +
         queryString.indexOf('/') +
-        3];
+        3;
+    print({operands, operatorIndex});
+    if (operands.length != 2) {
+      setState(() {
+        answer = 'Enter second operand';
+      });
+      return;
+    }
     setState(() {
-      answer = doOperation(operands[0], operands[1], operator);
+      try {
+        answer =
+            doOperation(operands[0], operands[1], queryString[operatorIndex]);
+      } on TypeError {
+        answer = 'Invalid Input';
+      } on RangeError {
+        answer = 'No Operator Provided';
+      }
     });
   }
 
