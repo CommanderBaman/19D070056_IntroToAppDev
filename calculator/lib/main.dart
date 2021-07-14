@@ -27,10 +27,55 @@ class _HomePageState extends State<HomePage> {
   String answer = '';
 
   void onNumpadPress(String charPressed) {
-    print(charPressed + ' pressed!');
+    switch (charPressed) {
+      // clear the data
+      case 'C':
+        setState(() {
+          answer = '';
+          queryString = '';
+        });
+        break;
+      // remove one element
+      case '<':
+        queryString = queryString.substring(0, queryString.length - 1);
+        print(queryString);
+        break;
+      // calculate the answer
+      case '=':
+        calculateAnswer();
+        break;
+      default:
+        setState(() {
+          queryString += charPressed;
+        });
+    }
+  }
+
+  void calculateAnswer() {
+    final operands = queryString.split(RegExp(r'[/*+-]'));
+    final operator = queryString[queryString.indexOf('*') +
+        queryString.indexOf('-') +
+        queryString.indexOf('+') +
+        queryString.indexOf('/') +
+        3];
     setState(() {
-      queryString += charPressed;
+      answer = doOperation(operands[0], operands[1], operator);
     });
+  }
+
+  String doOperation(String operand1, String operand2, String operator) {
+    switch (operator) {
+      case '+':
+        return (double.parse(operand1) + double.parse(operand2)).toString();
+      case '-':
+        return (double.parse(operand1) - double.parse(operand2)).toString();
+      case '*':
+        return (double.parse(operand1) * double.parse(operand2)).toString();
+      case '/':
+        return (double.parse(operand1) / double.parse(operand2)).toString();
+      default:
+        return 'Invalid Input';
+    }
   }
 
   @override
@@ -75,9 +120,24 @@ class AnswerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(this.text),
-      decoration:
-          BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Text(
+              this.text,
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+              maxLines: 1,
+            ),
+          )
+        ],
+      ),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: (Colors.grey[350])!)),
+      ),
     );
   }
 }
@@ -89,9 +149,23 @@ class QueryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(this.text),
-      decoration:
-          BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey))),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Text(
+              this.text,
+              textAlign: TextAlign.right,
+              style: TextStyle(color: Colors.black54, fontSize: 24),
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+      decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: (Colors.grey[350])!))),
     );
   }
 }
@@ -102,65 +176,65 @@ class Numpad extends StatelessWidget {
   final ValueSetter<String> onKeyPress;
 
   final List<String> firstRow = const ['7', '8', '9', '/'];
-  final List<String> secondRow = const ['4', '5', '6', 'X'];
+  final List<String> secondRow = const ['4', '5', '6', '*'];
   final List<String> thirdRow = const ['1', '2', '3', '-'];
-  final List<String> fourthRow = const ['.', '0', '<x', '+'];
+  final List<String> fourthRow = const ['.', '0', '<', '+'];
   final List<String> fifthRow = const ['C', '='];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 10),
+        padding: EdgeInsets.only(top: 10),
         child: Column(
-      children: [
-        Expanded(
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: firstRow
-                  .map((displayValue) => NumpadButton(
-                        text: displayValue,
-                        onKeyPress: onKeyPress,
-                      ))
-                  .toList()),
-        ),
-        Expanded(
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: secondRow
-                    .map((displayValue) => NumpadButton(
-                          text: displayValue,
-                          onKeyPress: onKeyPress,
-                        ))
-                    .toList())),
-        Expanded(
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: thirdRow
-                    .map((displayValue) => NumpadButton(
-                          text: displayValue,
-                          onKeyPress: onKeyPress,
-                        ))
-                    .toList())),
-        Expanded(
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: fourthRow
-                    .map((displayValue) => NumpadButton(
-                          text: displayValue,
-                          onKeyPress: onKeyPress,
-                        ))
-                    .toList())),
-        Expanded(
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: fifthRow
-                    .map((displayValue) => NumpadButton(
-                          text: displayValue,
-                          onKeyPress: onKeyPress,
-                        ))
-                    .toList())),
-      ],
-    ));
+          children: [
+            Expanded(
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: firstRow
+                      .map((displayValue) => NumpadButton(
+                            text: displayValue,
+                            onKeyPress: onKeyPress,
+                          ))
+                      .toList()),
+            ),
+            Expanded(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: secondRow
+                        .map((displayValue) => NumpadButton(
+                              text: displayValue,
+                              onKeyPress: onKeyPress,
+                            ))
+                        .toList())),
+            Expanded(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: thirdRow
+                        .map((displayValue) => NumpadButton(
+                              text: displayValue,
+                              onKeyPress: onKeyPress,
+                            ))
+                        .toList())),
+            Expanded(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: fourthRow
+                        .map((displayValue) => NumpadButton(
+                              text: displayValue,
+                              onKeyPress: onKeyPress,
+                            ))
+                        .toList())),
+            Expanded(
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: fifthRow
+                        .map((displayValue) => NumpadButton(
+                              text: displayValue,
+                              onKeyPress: onKeyPress,
+                            ))
+                        .toList())),
+          ],
+        ));
   }
 }
 
@@ -178,9 +252,11 @@ class NumpadButton extends StatelessWidget {
         },
         style: OutlinedButton.styleFrom(shape: CircleBorder()),
         child: Container(
-            child: Text(
-          text,
-          style: TextStyle(color: Colors.black),
-        ), padding: EdgeInsets.all(25),));
+          child: Text(
+            text,
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          ),
+          padding: EdgeInsets.all(25),
+        ));
   }
 }
